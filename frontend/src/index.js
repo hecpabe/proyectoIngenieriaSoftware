@@ -15,6 +15,8 @@ import { PrimeReactProvider } from "primereact/api";
 
 // CSS
 import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "/node_modules/primeflex/primeflex.css"
+import 'primeicons/primeicons.css';
 
 // Bibliotecas propias de componentes
 import App from "./App"
