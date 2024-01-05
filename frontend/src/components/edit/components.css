@@ -1,0 +1,23 @@
+
+.p-dialog-mask {
+    backdrop-filter: blur(1px); /* Ajusta este valor según tus necesidades */
+}
+
+.p-dialog .p-dialog-header {
+    background-color: #007bff; /* Cambia esto por el color deseado */
+    color: white; /* Cambia el color del texto si es necesario */
+}
+
+
+.container {
+    display: flex;
+}
+
+.column div {
+    margin-bottom: 15px; /* Espacio entre elementos dentro de la columna */
+}
+.column {
+    flex: 1; /* Esto asegura que cada columna tenga el mismo ancho */
+    padding: 10px; /* Espacio dentro de cada columna */
+     /* Solo para visualización, puede eliminarlo si no lo necesita */
+}
