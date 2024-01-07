@@ -4,10 +4,11 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
+import { Calendar } from 'primereact/calendar';
 import './components.css'
 
 const EditarProducto = ({ producto, visible, onHideDialog,onSaveProducto }) => {
-    const formatoProducto = ['Benjamín', 'Magnum'];
+    const formatoProducto = ["Benjamín","Magnum","Imperial"];
 
 
     const [productoEditado, setProductoEditado] = useState({ ...producto });
@@ -21,7 +22,21 @@ const EditarProducto = ({ producto, visible, onHideDialog,onSaveProducto }) => {
       var value=null;
       if (name === 'PrecioProducto'){
         value = e.value;
-      }else{
+      }
+      else if(name === "Cosecha"){
+        const fecha = new Date(e.value);
+            const year = fecha.getFullYear();
+            const month = fecha.getMonth() + 1; 
+            const day = fecha.getDate();
+
+            // Aseguramos de que el día y el mes sean de dos dígitos
+            const formattedMonth = month < 10 ? `0${month}` : month;
+            const formattedDay = day < 10 ? `0${day}` : day;
+
+            // Formatear la fecha como 'año/mes/día'
+            value = `${year}/${formattedMonth}/${formattedDay}`;
+      }
+      else{
         value = e.target.value;
       }
       setProductoEditado(prevProducto => ({
@@ -43,21 +58,25 @@ const EditarProducto = ({ producto, visible, onHideDialog,onSaveProducto }) => {
     );
 
     return (
-        <Dialog header="Editar Producto" visible={visible} onHide={onHideDialog} style={{ width: '70vw' }} footer={footerContent} headerStyle={{ textAlign: 'center' }} >
+        <Dialog header="Crear / Editar Producto" visible={visible} onHide={onHideDialog} style={{ width: '70vw' }} footer={footerContent} headerStyle={{ textAlign: 'center' }} >
 
         <div className="container p-fluid">
 
             <div className="column">
                 {/* Descripcion */}
                 <div className="p-field">
-                <label htmlFor="nif">Descripción</label>
-                <InputText id="nif" value={productoEditado.DescripcionProducto|| ""} onChange={(e) => handleInputChange(e,'DescripcionProducto')} />
+                <label htmlFor="descripcion">Descripción</label>
+                <InputText id="descripcion" value={productoEditado.DescripcionProducto|| ""} onChange={(e) => handleInputChange(e,'DescripcionProducto')} />
                 </div>
 
                 {/* Año de cosecha */}
                 <div className="p-field">
-                <label htmlFor="nombre">Año de Cosecha</label>
-                <InputText id="nombre" value={productoEditado.Cosecha|| ""} onChange={(e) => handleInputChange(e, 'Cosecha')} />
+                <label htmlFor="cosecha">Fecha de la cosecha</label>
+                { 
+                  productoEditado.Cosecha ?
+                  <Calendar id="cosecha" value={new Date(productoEditado.Cosecha)} onChange={(e) => handleInputChange(e, 'Cosecha')} showIcon/> :
+                  <Calendar id="cosecha" onChange={(e) => handleInputChange(e, 'Cosecha')} showIcon/>
+                }
                 </div>
 
             </div>
@@ -77,7 +96,7 @@ const EditarProducto = ({ producto, visible, onHideDialog,onSaveProducto }) => {
                 {/* Precio del Producto */}
                 <div className="p-field">
                 <label htmlFor="numHijos">Precio del Producto</label>
-                <InputNumber id="numHijos" value={productoEditado.PrecioProducto} onChange={(e) => handleInputChange(e, 'PrecioProducto')} />
+                <InputNumber id="numHijos" value={productoEditado.PrecioProducto} mode="decimal" maxFractionDigits={2} locale="de-DE" onChange={(e) => handleInputChange(e, 'PrecioProducto')} />
                 </div>
 
 

@@ -3,11 +3,12 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
+import { Dropdown } from 'primereact/dropdown';
 import './components.css'
 
 const EditarCliente = ({ cliente, visible, onHideDialog,onSaveCliente }) => {
    
-
+    const tiposCliente = ["Particular","Empresa"];
 
     const [clienteEditado, setClienteEditado] = useState({ ...cliente });
 
@@ -42,7 +43,7 @@ const EditarCliente = ({ cliente, visible, onHideDialog,onSaveCliente }) => {
     );
 
     return (
-        <Dialog header="Editar Cliente" visible={visible} onHide={onHideDialog} style={{ width: '70vw' }} footer={footerContent} headerStyle={{ textAlign: 'center' }} >
+        <Dialog header="Crear / Editar Cliente" visible={visible} onHide={onHideDialog} style={{ width: '70vw' }} footer={footerContent} headerStyle={{ textAlign: 'center' }} >
 
         <div className="container p-fluid">
 
@@ -98,7 +99,11 @@ const EditarCliente = ({ cliente, visible, onHideDialog,onSaveCliente }) => {
                 <InputNumber id="numHijos" value={clienteEditado.DescuentoVolumen} onChange={(e) => handleInputChange(e, 'DescuentoVolumen')} />
                 </div>
 
-
+                {/* Tipo de cliente */}
+                <div className="p-field">
+                <label htmlFor="tipoCliente">Tipo de cliente</label>
+                <Dropdown id="tipoCliente" value={clienteEditado.TipoCliente} options={tiposCliente} onChange={(e) => handleInputChange(e, 'TipoCliente')} />
+                </div>
 
             </div>
 

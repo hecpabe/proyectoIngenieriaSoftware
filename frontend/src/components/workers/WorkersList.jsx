@@ -9,7 +9,7 @@
 
 /* Importado de Bibliotecas */
 // Bibliotecas externas
-import React, { useState } from "react";
+import React from "react";
 
 // Primereact
 import { DataView } from "primereact/dataview";
@@ -19,8 +19,12 @@ import { confirmDialog } from "primereact/confirmdialog";
 
 // Bibliotecas de componentes propios
 
+// Bibliotecas de utilidades propias
+import { closeSession } from "../../util/SessionUtils";
+import { deleteWorkerRequest } from "../../util/APIWorkersUtils";
+
 /* Componente Principal */
-function WorkersList({workers, setWorkers, setWorkerToEdit, sortField, sortOrder, searchValue}){
+function WorkersList({workers, setWorkers, setWorkerToEdit, setWorkerToView, sortField, sortOrder, searchValue, sessionToken, setSessionToken, setIsAdminWorker, messagesQueue}){
 
     // Filtramos los trabajadores en función el search value
     const filteredWorkers = workers.filter(worker => 
@@ -61,7 +65,11 @@ function WorkersList({workers, setWorkers, setWorkerToEdit, sortField, sortOrder
                         </div>
                         <div className="col-4 flex justify-content-end">
                             <div>
-                                <Button icon="pi pi-fw pi-eye" severity="info" className="mr-2" />
+                                <Button icon="pi pi-fw pi-eye" severity="info" className="mr-2" onClick={
+                                    () => {
+                                        setWorkerToView(worker);
+                                    }
+                                } />
                                 <Button icon="pi pi-fw pi-pencil" severity="help" className="mr-2" onClick={
                                     () => {
                                         setWorkerToEdit(worker);
@@ -77,9 +85,32 @@ function WorkersList({workers, setWorkers, setWorkerToEdit, sortField, sortOrder
                                             acceptLabel: 'Sí',
                                             rejectLabel: 'No',
                                             accept: () => {
-                                                // TODO: Eliminar el worker de la base de datos mediante el backend
-                                                const newWorkers = workers.filter(currentWorker => currentWorker.idPersonal != worker.idPersonal);
-                                                setWorkers(newWorkers);
+                                                // Función callback en caso de que la petición sea correcta
+                                                const onDeleteWorkerSuccess = (data) => {
+                                                    // Sacamos al empleado de la lista
+                                                    const newWorkers = workers.filter(currentWorker => currentWorker.idPersonal != worker.idPersonal);
+                                                    setWorkers(newWorkers);
+                                                    messagesQueue.current.show([
+                                                        { severity: "success", summary: "Trabajador eliminado", detail: "El trabajador ha sido eliminado con éxito", sticky: true }
+                                                    ])
+                                                }
+                                                
+                                                // Función callback en caso de que la petición sea erronea
+                                                const onDeleteWorkerError = (error) => {
+                                                    // Si el error es un 401 (Unauthorized) hay un error con la sesión, por lo que la cerramos
+                                                    if(error.response.status === 401){
+                                                        closeSession(setSessionToken, setIsAdminWorker);
+                                                    }
+                                                    // Sino, mostramos que ha ocurrido un error
+                                                    else{
+                                                        messagesQueue.current.show([
+                                                            { severity: "error", summary: "Error al eliminar al trabajador", detail: "Ha ocurrido un error desconocido, póngase en contacto con el administrador de la página", sticky: true }
+                                                        ])
+                                                    }
+                                                }
+
+                                                // Lanzamos la petición
+                                                deleteWorkerRequest(process.env.REACT_APP_BACK_ROUTE_DELETE_WORKER, worker.idPersonal, sessionToken, onDeleteWorkerSuccess, onDeleteWorkerError);
                                             }
                                         });
                                     }
@@ -92,7 +123,6 @@ function WorkersList({workers, setWorkers, setWorkerToEdit, sortField, sortOrder
         );
     }
 
-    // TODO: Implementar funcionalidades del botón de visualizar al trabajador
     // Retornamos el código HTML
     return(
         <>

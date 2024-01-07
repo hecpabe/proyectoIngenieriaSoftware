@@ -20,14 +20,14 @@ import { Message } from "primereact/message"
 import { Messages } from "primereact/messages"
 
 // Bibliotecas de componentes propios
-import { checkSessionToken } from "../../util/SessionUtils"
+import { checkSessionToken, loginUserRequest } from "../../util/SessionUtils"
 
 // Declaraciones constantes
 const INPUT_FIELD_DEFAULT_CLASSNAME = "w-full mb-3"
 const INPUT_FIELD_ERROR_CLASSNAME = INPUT_FIELD_DEFAULT_CLASSNAME + " p-invalid"
 
 /* Componente Principal */
-function Login({sessionToken, setSessionToken}){
+function Login({sessionToken, setSessionToken, setIsAdminWorker}){
 
     // Declaración de estados
     const [passwordValue, setPasswordValue] = useState("");
@@ -70,9 +70,51 @@ function Login({sessionToken, setSessionToken}){
         if(loginError)
             return;
 
+        // Función en caso de que la petición sea exitosa
+        const onLoginSuccess = (data) => {
+            /* console.log("ÉXITO");
+            console.log(data.data.token);
+            console.log(data.data.user); */
+
+            // Almacenamos el token de sesión y si el usuario es admin o no
+            setSessionToken(data.data.token);
+            setIsAdminWorker(data.data.user.CategoriaLaboral === "Administrativo")
+
+            // Navegamos al origen en el que estaba el usuario
+            navigate(referrer);
+        }
+
+        // Función en caso de que la petición sea erronea
+        const onLoginError = (error) => {
+            /* console.log("ERROR");
+            console.log(error.response.status); */
+
+            // Si el error es un 403 (Forbidden) o 404 (Not found) mostramos que la contraseña es incorrecta, sino, mostramos que ha ocurrido un error
+            if(error.response.status === 403 || error.response.status === 404){
+                // Resaltamos los campos como error
+                setLoginPasswordInputClasses(INPUT_FIELD_ERROR_CLASSNAME);
+
+                // Limpiamos los campos
+                setPasswordValue("");
+                setRemembermeValue(false);
+
+                // Mostramos el mensaje de error
+                messagesQueue.current.show([
+                    { severity: 'error', summary: 'Error de inicio de sesión', detail: 'Código de empresa erroneo', sticky: true }
+                ])
+            }
+            else{
+                // Mostramos el mensaje de error
+                messagesQueue.current.show([
+                    { severity: 'error', summary: 'Error del sistema', detail: 'Ha ocurrido un error al intentar iniciar sesión, póngase en contacto con el administrador de la aplicación', sticky: true }
+                ])
+            }
+        }
+
         // Mandar la petición con los datos al back y obtenemos si ha ocurrido un error o no
-        // TODO: Realizar la petición y evaluar la respuesta
-        loginError = false
+        loginUserRequest(process.env.REACT_APP_BACK_ROUTE_LOGIN, passwordValue, onLoginSuccess, onLoginError);
+
+        /* loginError = false
 
         // Si hay error mostramos el mensaje de error y resaltamos el error en los campos, si no hay error, almacenamos el token de sesión y redirigimos al dashboard
         if(loginError){
@@ -89,8 +131,8 @@ function Login({sessionToken, setSessionToken}){
                 { severity: 'error', summary: 'Error de inicio de sesión', detail: 'Usuario o contraseña erroneos', sticky: true }
             ])
 
-        }
-        else{
+        } */
+        /* else{
 
             // Almacenamos el token de sesión en el navegador
             setSessionToken("test");
@@ -98,7 +140,7 @@ function Login({sessionToken, setSessionToken}){
             // Redirigimos al referrer
             navigate(referrer);
 
-        }
+        } */
 
     }
 
@@ -131,11 +173,11 @@ function Login({sessionToken, setSessionToken}){
                             <div className="flex justify-content-center">
                                 {/* Contraseña */}
                                 <div className="col-12">
-                                    <label htmlFor="password" className="block text-900 font-medium mb-2">Contraseña</label>
+                                    <label htmlFor="password" className="block text-900 font-medium mb-2">Código de empresa</label>
                                     <Password
                                         id="password"
                                         type="password"
-                                        placeholder="Contraseña"
+                                        placeholder="Código de empresa"
                                         className={loginPasswordInputClasses}
                                         inputClassName="w-full"
                                         value={passwordValue}
@@ -153,7 +195,7 @@ function Login({sessionToken, setSessionToken}){
                                     <Checkbox id="rememberme" className="mr-2" checked={remembermeValue} onChange={(e) => setRemembermeValue(e.checked)} />
                                     <label htmlFor="rememberme">Recordar usuario por dos semanas</label>
                                 </div>
-                                <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">¿Has olvidado la contraseña?</a>
+                                <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">¿Has olvidado el código de empresa?</a>
                             </div>
 
                             {/* Botón de inicio de sesión */}

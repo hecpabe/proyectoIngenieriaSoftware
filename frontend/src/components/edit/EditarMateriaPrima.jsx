@@ -5,10 +5,11 @@ import { Calendar } from 'primereact/calendar';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
+import { Rating } from 'primereact/rating';
 import './components.css'
 
 const EditarMateriaPrima = ({ materiaPrima, visible, onHideDialog,onSaveMateriaPrima }) => {
-    const categoriasValoraciones = [1,2,3,4,5];
+    const tiposUva = ["Tempranillo","Garnacha","Mencía","Monastrell"];
     
 
     const [materiaPrimaEditado, setMateriaPrimaEditado] = useState({ ...materiaPrima });
@@ -20,7 +21,7 @@ const EditarMateriaPrima = ({ materiaPrima, visible, onHideDialog,onSaveMateriaP
   
     const handleInputChange = (e, name) => {
       var value=null;
-      if (name === 'Cantidad' || name === 'CodigoVinia' || name ==='Valoracion'  ){
+      if (name === 'Cantidad' || name === 'CodigoVinia' || name ==='Valoracion' || name === 'GradoMadurez'  ){
         value = e.value;
       }else if(name==='Fecha'){
            
@@ -58,7 +59,7 @@ const EditarMateriaPrima = ({ materiaPrima, visible, onHideDialog,onSaveMateriaP
     );
 
     return (
-        <Dialog header="Editar Materia prima" visible={visible} onHide={onHideDialog}  footer={footerContent} headerStyle={{ textAlign: 'center' }} >
+        <Dialog header="Crear / Editar Materia prima" visible={visible} onHide={onHideDialog}  footer={footerContent} headerStyle={{ textAlign: 'center' }} >
 
         <div className="container p-fluid">
 
@@ -72,7 +73,11 @@ const EditarMateriaPrima = ({ materiaPrima, visible, onHideDialog,onSaveMateriaP
                 {/* Fecha */}
                 <div className="p-field">
                 <label htmlFor="Fecha">Fecha</label>
-                <Calendar id="Fecha" value={new Date(materiaPrimaEditado.Fecha)} onChange={(e) => handleInputChange(e, 'Fecha')} showIcon/>
+                { 
+                  materiaPrima.Fecha ?
+                  <Calendar id="Fecha" value={new Date(materiaPrimaEditado.Fecha)} onChange={(e) => handleInputChange(e, 'Fecha')} showIcon/> :
+                  <Calendar id="Fecha" onChange={(e) => handleInputChange(e, 'Fecha')} showIcon/>
+                }
                 </div>
 
                 {/* Cantidad */}
@@ -107,19 +112,20 @@ const EditarMateriaPrima = ({ materiaPrima, visible, onHideDialog,onSaveMateriaP
                 {/* Tipo de uva */}
                 <div className="p-field">
                 <label htmlFor="TipoUva">Tipo de Uva</label>
-                <InputText id="TipoUva" value={materiaPrimaEditado.TipoUva|| ""} onChange={(e) => handleInputChange(e, 'TipoUva')} />
+                <Dropdown id="TipoUva" value={materiaPrimaEditado.TipoUva||""} options={tiposUva} onChange={(e) => handleInputChange(e, 'TipoUva')} />
                 </div>
 
                 {/* Grado de madurez */}
                 <div className="p-field">
                 <label htmlFor="GradoMadurez">Grado de Madurez</label>
-                <InputText id="GradoMadurez" value={materiaPrimaEditado.GradoMadurez|| ""} onChange={(e) => handleInputChange(e, 'GradoMadurez')} />
+                <InputNumber id="GradoMadurez" value={materiaPrimaEditado.GradoMadurez|| 0} onChange={(e) => handleInputChange(e, 'GradoMadurez')} />
                 </div>
 
                 {/* Valoracion */}
                 <div className="p-field">
                 <label htmlFor="Valoracion">Valoracion</label>
-                <Dropdown id="Valoracion" value={materiaPrimaEditado.Valoracion} options={categoriasValoraciones} onChange={(e) => handleInputChange(e, 'Valoracion')} />
+                {/* <Dropdown id="Valoracion" value={materiaPrimaEditado.Valoracion} options={categoriasValoraciones} onChange={(e) => handleInputChange(e, 'Valoracion')} /> */}
+                <Rating id='Valoracion' value={materiaPrimaEditado.Valoracion} onChange={(e) => handleInputChange(e, 'Valoracion')} cancel={false} />
                 </div>
 
             </div>

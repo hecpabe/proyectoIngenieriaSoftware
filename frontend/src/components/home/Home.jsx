@@ -19,7 +19,7 @@ import Navbar from "../common/Navbar";
 import { checkSessionToken } from "../../util/SessionUtils";
 
 /* Componente Principal */
-function Home({sessionToken, setSessionToken, searchValue, setSearchValue}){
+function Home({sessionToken, setSessionToken, searchValue, setSearchValue, isAdminWorker, setIsAdminWorker}){
 
     // Navigation
     const navigate = useNavigate();
@@ -38,7 +38,13 @@ function Home({sessionToken, setSessionToken, searchValue, setSearchValue}){
     return(
         <>
             {   sessionEstablished && 
-                <Navbar setSessionToken={setSessionToken} searchValue={searchValue} setSearchValue={setSearchValue} />
+                <Navbar 
+                    setSessionToken={setSessionToken} 
+                    searchValue={searchValue} 
+                    setSearchValue={setSearchValue} 
+                    isAdminWorker={isAdminWorker} 
+                    setIsAdminWorker={setIsAdminWorker} 
+                />
             }
         </>
     );

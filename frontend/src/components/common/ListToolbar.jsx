@@ -65,7 +65,6 @@ function ListToolbar({filterButtons, addButtons, setSortField, setSortOrder}){
     }
 
     // Función con la que construimos los botones de agregar
-    // TODO: Agregar funcionalidad del botón de agregar
     const buildAddButtons = (buttons) => {
         return buttons.map((button) => {
             return <Button 

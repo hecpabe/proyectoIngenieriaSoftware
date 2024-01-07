@@ -60,7 +60,7 @@ const EditarEmpleado = ({ empleado, visible, onHideDialog,onSaveEmpleado }) => {
     );
 
     return (
-        <Dialog header="Editar Empleado" visible={visible} onHide={onHideDialog}  footer={footerContent} headerStyle={{ textAlign: 'center' }} >
+        <Dialog header="Crear / Editar Empleado" visible={visible} onHide={onHideDialog}  footer={footerContent} headerStyle={{ textAlign: 'center' }} >
 
         <div className="container p-fluid">
 
@@ -87,7 +87,11 @@ const EditarEmpleado = ({ empleado, visible, onHideDialog,onSaveEmpleado }) => {
                 <div className="p-field">
                 <label htmlFor="fechaNacimiento">Fecha de Nacimiento</label>
                 
-                <Calendar value={new Date(empleadoEditado.FechaNacimiento)} onChange={(e) => handleInputChange(e, 'FechaNacimiento')} showIcon />
+                {
+                  empleadoEditado.FechaNacimiento ?
+                  <Calendar value={new Date(empleadoEditado.FechaNacimiento)} onChange={(e) => handleInputChange(e, 'FechaNacimiento')} showIcon /> :
+                  <Calendar onChange={(e) => handleInputChange(e, 'FechaNacimiento')} showIcon />
+                }
                 </div>
 
                 {/* Domicilio */}
@@ -100,6 +104,12 @@ const EditarEmpleado = ({ empleado, visible, onHideDialog,onSaveEmpleado }) => {
                 <div className="p-field">
                 <label htmlFor="telefono">Teléfono</label>
                 <InputText id="telefono" value={empleadoEditado.Telefono|| ""} onChange={(e) => handleInputChange(e, 'Telefono')} />
+                </div>
+
+                {/* Código de Empresa */}
+                <div className="p-field">
+                <label htmlFor="codigoEmpresa">Código de empresa</label>
+                <InputText id="codigoEmpresa" value={empleadoEditado.CodigoEmpresa || ""} onChange={(e) => handleInputChange(e, 'CodigoEmpresa')} />
                 </div>
 
             
@@ -120,7 +130,11 @@ const EditarEmpleado = ({ empleado, visible, onHideDialog,onSaveEmpleado }) => {
                 {/* Fecha de Ingreso */}
                 <div className="p-field">
                 <label htmlFor="fechaIngreso">Fecha de Ingreso</label>
-                <Calendar id="fechaIngreso" value={new Date(empleadoEditado.FechaIngreso)} onChange={(e) => handleInputChange(e, 'FechaIngreso')} showIcon />
+                {
+                  empleadoEditado.FechaIngreso ?
+                  <Calendar id="fechaIngreso" value={new Date(empleadoEditado.FechaIngreso)} onChange={(e) => handleInputChange(e, 'FechaIngreso')} showIcon /> :
+                  <Calendar id="fechaIngreso" onChange={(e) => handleInputChange(e, 'FechaIngreso')} showIcon />
+                }
                 </div>
 
                 {/* Número de Hijos */}

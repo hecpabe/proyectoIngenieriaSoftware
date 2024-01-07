@@ -17,9 +17,10 @@ import { Menubar } from "primereact/menubar";
 import { InputText } from "primereact/inputtext";
 
 // Bibliotecas de componentes propios
+import { closeSession } from "../../util/SessionUtils";
 
 /* Componente Principal */
-function Navbar({searchValue, setSearchValue, setSessionToken}){
+function Navbar({searchValue, setSearchValue, setSessionToken, isAdminWorker, setIsAdminWorker}){
 
     // Declaraciones
     const navigate = useNavigate();
@@ -40,15 +41,19 @@ function Navbar({searchValue, setSearchValue, setSessionToken}){
             icon: "pi pi-fw pi-building",
             items: [
                 {
-                    label: "Materia prima",
-                    icon: "pi pi-fw pi-box"
+                    label: "Materias primas",
+                    icon: "pi pi-fw pi-box",
+                    command: () => {
+                        navigate(process.env.REACT_APP_ROUTE_RAW_MATERIALS);
+                    }
                 },
                 {
                     label: "Personal",
                     icon: "pi pi-fw pi-briefcase",
                     command: () => {
-                        navigate(process.env.REACT_APP_ROUTE_WORKERS)
-                    }
+                        navigate(process.env.REACT_APP_ROUTE_WORKERS);
+                    },
+                    disabled: !isAdminWorker
                 }
             ]
         },
@@ -58,19 +63,31 @@ function Navbar({searchValue, setSearchValue, setSessionToken}){
             items: [
                 {
                     label: "Productos",
-                    icon: "pi pi-fw pi-tags"
+                    icon: "pi pi-fw pi-tags",
+                    command: () =>{
+                        navigate(process.env.REACT_APP_ROUTE_PRODUCTS);
+                    }
                 },
                 {
                     label: "Clientes",
-                    icon: "pi pi-fw pi-users"
+                    icon: "pi pi-fw pi-users",
+                    command: () =>{
+                        navigate(process.env.REACT_APP_ROUTE_CLIENTS);
+                    }
                 },
                 {
                     label: "Pedidos",
-                    icon: "pi pi-fw pi-shopping-cart"
+                    icon: "pi pi-fw pi-shopping-cart",
+                    command: () =>{
+                        navigate(process.env.REACT_APP_ROUTE_ORDERS);
+                    }
                 },
                 {
                     label: "Facturas",
-                    icon: "pi pi-fw pi-credit-card"
+                    icon: "pi pi-fw pi-credit-card",
+                    command: () =>{
+                        navigate(process.env.REACT_APP_ROUTE_BILLS);
+                    }
                 }
             ]
         },
@@ -78,7 +95,7 @@ function Navbar({searchValue, setSearchValue, setSessionToken}){
             label: "Cerrar sesión",
             icon: "pi pi-fw pi-sign-out",
             command: () => {
-                setSessionToken("");
+                closeSession(setSessionToken, setIsAdminWorker);
             }
         }
     ]
@@ -86,8 +103,6 @@ function Navbar({searchValue, setSearchValue, setSessionToken}){
     const menuEnd = <InputText placeholder="Buscar" type="text" className="w-full" value={searchValue} onInput={(e) => {
         setSearchValue(e.target.value);
     }} />;
-
-    // TODO: Hacer que si el usuario no es administrador no pueda acceder al apartado de personal
 
     // Retornamos el código HTML
     return(
